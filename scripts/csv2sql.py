@@ -12,14 +12,23 @@ conn = psycopg2.connect(
 print("Opened database successfully")
 
 cur = conn.cursor()
-cur.execute('''CREATE TABLE IRIS
+cur.execute('''CREATE TABLE train_identity
     (ID INT PRIMARY KEY NOT NULL,
     SEPAL_LENGTH  REAL,
     SEPAL_WIDTH REAL,
     PETAL_LENGTH REAL,
     PETAL_WIDTH REAL,
     VARIETY TEXT);''')
-print("Table created successfully")
+print("Table train_identity created successfully")
+
+cur.execute('''CREATE TABLE train_transaction
+    (ID INT PRIMARY KEY NOT NULL,
+    SEPAL_LENGTH  REAL,
+    SEPAL_WIDTH REAL,
+    PETAL_LENGTH REAL,
+    PETAL_WIDTH REAL,
+    VARIETY TEXT);''')
+print("Table train_transaction created successfully")
 
 data = pd.read_csv("data/iris.csv")
 for idx in range(len(data)):

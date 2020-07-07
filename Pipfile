@@ -5,9 +5,15 @@ verify_ssl = true
 
 [dev-packages]
 jupyter = "*"
+pylint = "*"
+pytest = "*"
+matplotlib = "*"
 
 [packages]
 kaggle = "*"
+pandas = "==0.22"
+psycopg2-binary = "==2.8.5"
+lightgbm = "==2.3.1"
 
 [requires]
 python_version = "3.6"
