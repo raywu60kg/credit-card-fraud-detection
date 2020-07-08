@@ -20,8 +20,7 @@ class Pipeline:
 
 
 class PostgreSqlPipeline(Pipeline):
-    def __init__(self):
-        self.config = 1
+    """TODO"""
 
     def query(self):
         return 0
