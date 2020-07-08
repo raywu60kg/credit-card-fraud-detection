@@ -3,7 +3,7 @@ import lightgbm as lgb
 import pandas as pd
 from src.config import data_primary_key, feature_names, label_name, productCD_categories, categorical_feature_names
 from sklearn.model_selection import train_test_split
-
+import numpy as np
 
 class Pipeline:
     def query(self):
@@ -58,25 +58,26 @@ class CsvFilePipeline(Pipeline):
             data_x, data_y, test_size=0.3, random_state=42)
         self.val_x, self.test_x, self.val_y, self.test_y = train_test_split(
             test_x, test_y, test_size=0.5, random_state=42)
-        return data_x, data_y
-
-    def get_train_data(self):
-        return lgb.Dataset(
+        
+        self.scale_pos_weight = (len(data_x)-sum(data_y[label_name[0]])/sum(data_y[label_name[0]]))
+        
+        self.d_train = lgb.Dataset(
             self.train_x,
             label=self.train_y,
             categorical_feature=categorical_feature_names, 
             free_raw_data=False)
+        return data_x, data_y
+
+    def get_train_data(self):
+        return self.d_train
 
     def get_val_data(self):
         return  lgb.Dataset(
             self.val_x,
             label=self.val_y,
             categorical_feature=categorical_feature_names, 
-            free_raw_data=False)
+            free_raw_data=False,
+            reference=self.d_train)
 
     def get_test_data(self):
-        return  lgb.Dataset(
-            self.test_x,
-            label=self.test_y,
-            categorical_feature=categorical_feature_names, 
-            free_raw_data=False)
+        return  self.test_x, self.test_y

@@ -35,6 +35,8 @@ class TestCsvFilePipeline:
         assert label_name[0] in res_y.columns
         for element in res_x["ProductCD"]:
             assert element in [0, 1, 2, 3, 4]
+        
+        assert csv_file_pipeline.scale_pos_weight == 299
 
     def test_get_train_data(self):
         _, _ = csv_file_pipeline.parse_data(test_raw_data)
@@ -43,6 +45,7 @@ class TestCsvFilePipeline:
         for feature_name in  train_data.categorical_feature:
             assert feature_name in categorical_feature_names
         assert len(train_data.label) == 210
+        # train_data.save_binary('tests/resources/train_data.bin')
 
     def test_get_val_data(self):
         _, _ = csv_file_pipeline.parse_data(test_raw_data)
@@ -51,11 +54,13 @@ class TestCsvFilePipeline:
         for feature_name in  val_data.categorical_feature:
             assert feature_name in categorical_feature_names
         assert len(val_data.label) == 45
+        # val_data.save_binary('tests/resources/val_data.bin')
 
     def test_get_test_data(self):
         _, _ = csv_file_pipeline.parse_data(test_raw_data)
-        test_data = csv_file_pipeline.get_test_data()
+        test_data_x, test_data_y = csv_file_pipeline.get_test_data()
 
-        for feature_name in  test_data.categorical_feature:
-            assert feature_name in categorical_feature_names
-        assert len(test_data.label) == 45
+        assert len(test_data_x) == 45
+        assert len(test_data_y) == 45
+        # test_data_x.to_csv("tests/resources/test_data_x.csv", index=False)
+        # test_data_y.to_csv("tests/resources/test_data_y.csv", index=False)
