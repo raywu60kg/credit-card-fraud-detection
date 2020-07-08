@@ -8,4 +8,14 @@ Therefore, we use postgresSQL as our database and FastAPI as our API framework t
 - make 
 - kaggle.json 
 
+## dev mode
+## Requirement
+- pipenv 
+```bash
+pipenv install --dev
+```
 ## Note
+```bash
+jupyter contrib nbextension install --sys-prefix
+```
+to enable jupyter notebook extension
