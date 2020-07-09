@@ -83,7 +83,7 @@ class TestLightGbmModel:
             train_data,
             valid_sets=val_data,
             feval=eval_average_precision,
-            # verbose_eval=False,
-            callbacks=[LightGBMCallback])
+            verbose_eval=False)
         print("@@@@", best_model)
+        print(best_model.best_score["valid_0"])
         assert analysis == 1
