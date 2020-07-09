@@ -4,6 +4,7 @@ from ray.tune.schedulers import ASHAScheduler
 from src.call_back import LightGBMCallback
 from src.eval import eval_average_precision
 from src.pipeline import CsvFilePipeline
+import pandas as pd
 import os 
 import json
 from ray import tune
@@ -71,37 +72,42 @@ class TrainLightGbmModel(TrainModel):
             tune.report(done=True)
         
         # Start tuning the hyperparams
-        # analysis = tune.run(
-        #     tune_light_gbm,
-        #     verbose=1,
-        #     config=hyperparams_space,
-        #     num_samples=num_samples,
-        #     scheduler=ASHAScheduler(metric="binary_logloss", mode="min"))
+        analysis = tune.run(
+            tune_light_gbm,
+            verbose=1,
+            config=hyperparams_space,
+            num_samples=num_samples,
+            scheduler=ASHAScheduler(metric="binary_logloss", mode="min"))
         
-        # # Get the best params setup
-        # log_dir = analysis.get_best_logdir('average_precision', mode="max")
-        # with open(os.path.join(log_dir, "params.json")) as f:
-        #     best_params = json.load(f)
+        # Get the best params setup
+        log_dir = analysis.get_best_logdir('average_precision', mode="max")
+        with open(os.path.join(log_dir, "params.json")) as f:
+            best_params = json.load(f)
         
-        # # Get the model using best params
-        # csv_file_pipeline = CsvFilePipeline()
-        # raw_data = csv_file_pipeline.query(
-        #     identity_dir=best_params["identity_dir"],
-        #     transaction_dir=best_params["transaction_dir"])
-        # csv_file_pipeline.parse_data(raw_data=raw_data)
+        # Get the model using best params
+        csv_file_pipeline = CsvFilePipeline()
+        raw_data = csv_file_pipeline.query(
+            identity_dir=best_params["identity_dir"],
+            transaction_dir=best_params["transaction_dir"])
+        csv_file_pipeline.parse_data(raw_data=raw_data)
 
-        # train_data = csv_file_pipeline.get_train_data()
-        # val_data = csv_file_pipeline.get_val_data()
-        # best_model = lgb.train(
-        #     best_params,
-        #     train_data,
-        #     valid_sets=val_data,
-        #     feval=eval_average_precision,
-        #     verbose_eval=False)
+        train_data = csv_file_pipeline.get_train_data()
+        val_data = csv_file_pipeline.get_val_data()
+        best_model = lgb.train(
+            best_params,
+            train_data,
+            valid_sets=val_data,
+            feval=eval_average_precision,
+            verbose_eval=False)
         return best_model
 
-    def save_model(self):
-        return 0
+    def save_model(self, model, save_model_dir):
+        model.save_model(os.path.join(save_model_dir, 'model.txt'))
+        return "Model saved"
+        
+        
 
-    def predict(self):
-        return 0
+    def predict(self, model, data):
+
+        prediction = model.predict(pd.DataFrame(data, index=[0]))
+        return prediction

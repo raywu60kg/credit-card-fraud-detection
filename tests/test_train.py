@@ -40,7 +40,25 @@ test_hyperparams_space = {
     "identity_dir": test_identity_dir,
     "transaction_dir": test_transaction_dir
 }
-
+test_data_json = {
+    "TransactionAmt": 50,
+    "ProductCD": 1,
+    "card1": 5220,
+    "C1":1,
+    "C2":1,
+    "C3":0,
+    "C4":1,
+    "C5":0,
+    "C6":1,
+    "C7":1,
+    "C8":1,
+    "C9":0,
+    "C10":1,
+    "C11":1,
+    "C12":0,
+    "C13":1,
+    "C14":1
+}
 
 class TestLightGbmModel:
     def test_simple_train(self):
@@ -57,33 +75,32 @@ class TestLightGbmModel:
 
     def test_get_best_model(self):
 
-        analysis = train_light_gbm_model.get_best_model(
+        best_model = train_light_gbm_model.get_best_model(
             hyperparams_space=test_hyperparams_space, num_samples=2)
-        print(analysis)
-        # print(analysis.get_best_logdir("~/ray_results/tune_light_gbm"))
-        print("++++++++")
-        print([k for k in analysis.dataframe()])
-        print(analysis.get_best_logdir('binary_logloss', mode="min"))
-        print(analysis.get_best_logdir('average_precision', mode="max"))
-        log_dir = analysis.get_best_logdir('average_precision', mode="max")
-        with open(os.path.join(log_dir, "params.json")) as f:
-            params = json.load(f)
-        print(params)
+        predictions = best_model.predict(test_data_x)
+        assert len(best_model.best_score["valid_0"]) == 3
+        assert len(predictions) == len(test_data_x)
 
-        csv_file_pipeline = CsvFilePipeline()
-        raw_data = csv_file_pipeline.query(
-            identity_dir=params["identity_dir"],
-            transaction_dir=params["transaction_dir"])
-        csv_file_pipeline.parse_data(raw_data=raw_data)
+    def test_save_model(self):
+        model = train_light_gbm_model.simple_train(
+            params=test_params,
+            train_data=train_data,
+            val_data=val_data)
+        res = train_light_gbm_model.save_model(
+            model=model,
+            save_model_dir="tests/"
+        )
+        assert res == "Model saved"
+    
+    def test_predict(self):
+        model = train_light_gbm_model.simple_train(
+            params=test_params,
+            train_data=train_data,
+            val_data=val_data)
+        prediction = train_light_gbm_model.predict(
+            model=model,
+            data=test_data_json)
 
-        train_data = csv_file_pipeline.get_train_data()
-        val_data = csv_file_pipeline.get_val_data()
-        best_model = lgb.train(
-            params,
-            train_data,
-            valid_sets=val_data,
-            feval=eval_average_precision,
-            verbose_eval=False)
-        print("@@@@", best_model)
-        print(best_model.best_score["valid_0"])
-        assert analysis == 1
+        assert len(prediction) == 1
+        assert type(prediction) is list
+        assert prediction[0] >= 0 and prediction[0] <= 1
