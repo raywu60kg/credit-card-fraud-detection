@@ -19,3 +19,6 @@ pipenv install --dev
 jupyter contrib nbextension install --sys-prefix
 ```
 to enable jupyter notebook extension
+
+## Reference
+https://github.com/ray-project/ray/blob/master/python/ray/tune/examples/lightgbm_example.py

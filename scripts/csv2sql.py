@@ -1,5 +1,6 @@
 import psycopg2
 import pandas as pd
+import gc
 
 
 conn = psycopg2.connect(
@@ -30,7 +31,7 @@ cur.execute('''CREATE TABLE train_transaction
     VARIETY TEXT);''')
 print("Table train_transaction created successfully")
 
-data = pd.read_csv("data/iris.csv")
+data = pd.read_csv("data/train_identity.csv")
 for idx in range(len(data)):
     cur.execute(
         (

@@ -18,6 +18,7 @@ pandas = "==0.22"
 psycopg2-binary = "==2.8.5"
 lightgbm = "==2.3.1"
 scikit-learn = "==0.23.1"
+ray = {version = "==0.8.6",extras = ["tune"]}
 
 [requires]
 python_version = "3.6"

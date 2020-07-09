@@ -23,4 +23,5 @@ feature_names = [
     'C14']
 productCD_categories = ['C', 'H', 'R', 'S', 'W']
 categorical_feature_names = ["card1", "ProductCD"]
+num_samples = 10
 
