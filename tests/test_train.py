@@ -44,21 +44,22 @@ test_data_json = {
     "TransactionAmt": 50,
     "ProductCD": 1,
     "card1": 5220,
-    "C1":1,
-    "C2":1,
-    "C3":0,
-    "C4":1,
-    "C5":0,
-    "C6":1,
-    "C7":1,
-    "C8":1,
-    "C9":0,
-    "C10":1,
-    "C11":1,
-    "C12":0,
-    "C13":1,
-    "C14":1
+    "C1": 1,
+    "C2": 1,
+    "C3": 0,
+    "C4": 1,
+    "C5": 0,
+    "C6": 1,
+    "C7": 1,
+    "C8": 1,
+    "C9": 0,
+    "C10": 1,
+    "C11": 1,
+    "C12": 0,
+    "C13": 1,
+    "C14": 1
 }
+
 
 class TestLightGbmModel:
     def test_simple_train(self):
@@ -88,10 +89,14 @@ class TestLightGbmModel:
             val_data=val_data)
         res = train_light_gbm_model.save_model(
             model=model,
-            save_model_dir="tests/"
-        )
-        assert res == "Model saved"
-    
+            save_model_dir="tests/",
+            test_data_x=test_data_x,
+            test_data_y=test_data_y)
+        for key in ["log_loss", "auc", "average_precision"]:
+            assert key in res.keys()
+        os.remove("tests/model.txt")
+        os.remove("tests/model_metrics.json")
+
     def test_predict(self):
         model = train_light_gbm_model.simple_train(
             params=test_params,
@@ -102,5 +107,4 @@ class TestLightGbmModel:
             data=test_data_json)
 
         assert len(prediction) == 1
-        assert type(prediction) is list
         assert prediction[0] >= 0 and prediction[0] <= 1

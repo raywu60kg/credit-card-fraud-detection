@@ -4,4 +4,6 @@ init-data:
 	mv ieee-fraud-detection.zip data/
 	unzip data/ieee-fraud-detection.zip -d data
 	echo "Init data sucessfully"
+run-app:
+	uvicorn api.app:app --reload
 	

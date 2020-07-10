@@ -1,13 +1,14 @@
-import lightgbm as lgb
-from src.eval import eval_average_precision
+from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 from src.call_back import LightGBMCallback
 from src.eval import eval_average_precision
+from src.eval import eval_average_precision
 from src.pipeline import CsvFilePipeline
-import pandas as pd
-import os 
+from sklearn.metrics import log_loss, roc_auc_score, average_precision_score
 import json
-from ray import tune
+import lightgbm as lgb
+import os
+import pandas as pd
 
 
 class TrainModel:
@@ -36,8 +37,8 @@ class TrainLightGbmModel(TrainModel):
         return model
 
     def get_best_model(self, hyperparams_space, num_samples):
-        
-        # define the tuning function for ray tune 
+
+        # define the tuning function for ray tune
         def tune_light_gbm(hyperparams_space):
 
             # init the data pipeline
@@ -58,8 +59,8 @@ class TrainLightGbmModel(TrainModel):
                 feval=eval_average_precision,
                 verbose_eval=False,
                 callbacks=[LightGBMCallback])
-            
-            # Report metrics 
+
+            # Report metrics
             metrics = {}
             for k, v in model.best_score["valid_0"].items():
                 metrics[k] = v
@@ -70,7 +71,7 @@ class TrainLightGbmModel(TrainModel):
                 average_precision=metrics["average_precision"],
                 done=True)
             tune.report(done=True)
-        
+
         # Start tuning the hyperparams
         analysis = tune.run(
             tune_light_gbm,
@@ -78,12 +79,12 @@ class TrainLightGbmModel(TrainModel):
             config=hyperparams_space,
             num_samples=num_samples,
             scheduler=ASHAScheduler(metric="binary_logloss", mode="min"))
-        
+
         # Get the best params setup
         log_dir = analysis.get_best_logdir('average_precision', mode="max")
         with open(os.path.join(log_dir, "params.json")) as f:
             best_params = json.load(f)
-        
+
         # Get the model using best params
         csv_file_pipeline = CsvFilePipeline()
         raw_data = csv_file_pipeline.query(
@@ -101,11 +102,24 @@ class TrainLightGbmModel(TrainModel):
             verbose_eval=False)
         return best_model
 
-    def save_model(self, model, save_model_dir):
+    def save_model(
+            self,
+            model,
+            save_model_dir,
+            test_data_x,
+            test_data_y):
+        y_pred = model.predict(test_data_x)
+        metrics = {
+            "log_loss": log_loss(y_true=test_data_y, y_pred=y_pred),
+            "auc": roc_auc_score(y_true=test_data_y, y_score=y_pred),
+            "average_precision": average_precision_score(
+                y_true=test_data_y, y_score=y_pred)
+        }
+        with open(os.path.join(save_model_dir, "model_metrics.json"), "w") as f:
+            json.dump(metrics, f)
+
         model.save_model(os.path.join(save_model_dir, 'model.txt'))
-        return "Model saved"
-        
-        
+        return metrics
 
     def predict(self, model, data):
 
