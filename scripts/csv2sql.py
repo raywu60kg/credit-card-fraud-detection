@@ -1,3 +1,4 @@
+"""TODO"""
 import psycopg2
 import pandas as pd
 import gc
@@ -34,17 +35,7 @@ print("Table train_transaction created successfully")
 data = pd.read_csv("data/train_identity.csv")
 for idx in range(len(data)):
     cur.execute(
-        (
-            "INSERT INTO IRIS"
-            "(ID, SEPAL_LENGTH, SEPAL_WIDTH,"
-            " PETAL_LENGTH, PETAL_WIDTH, VARIETY)"
-            "VALUES ({}, {}, {}, {}, {}, '{}')".format(
-                idx,
-                data["sepal.length"][idx],
-                data["sepal.width"][idx],
-                data["petal.length"][idx],
-                data["petal.width"][idx],
-                data["variety"][idx])))
+
 print("Records created successfully")
 conn.commit()
 conn.close()

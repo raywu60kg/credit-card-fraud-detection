@@ -1,7 +1,6 @@
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
-from src.call_back import LightGBMCallback
-from src.eval import eval_average_precision
+from src.callback import LightGBMCallback
 from src.eval import eval_average_precision
 from src.pipeline import CsvFilePipeline
 from sklearn.metrics import log_loss, roc_auc_score, average_precision_score
@@ -9,6 +8,7 @@ import json
 import lightgbm as lgb
 import os
 import pandas as pd
+import logging
 
 
 class TrainModel:
@@ -123,5 +123,5 @@ class TrainLightGbmModel(TrainModel):
 
     def predict(self, model, data):
 
-        prediction = model.predict(pd.DataFrame(data, index=[0]))
+        prediction = model.predict(pd.DataFrame(data, index=[0]))[0]
         return prediction

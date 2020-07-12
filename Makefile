@@ -6,4 +6,5 @@ init-data:
 	echo "Init data sucessfully"
 run-app:
 	uvicorn api.app:app --reload
-	
+kaggle-predict:
+	python scripts/get_kaggle_predictions.py

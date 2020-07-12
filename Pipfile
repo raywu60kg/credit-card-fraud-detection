@@ -11,6 +11,8 @@ matplotlib = "*"
 jupyter-contrib-nbextensions = "*"
 autopep8 = "*"
 pep8 = "*"
+matplotlib-venn = "*"
+seaborn = "*"
 
 [packages]
 kaggle = "*"
@@ -21,6 +23,8 @@ scikit-learn = "==0.23.1"
 ray = {extras = ["tune"],version = "==0.8.6"}
 fastapi = "==0.54.1"
 uvicorn = "==0.11.5"
+requests = "==2.24.0"
+tqdm = "==4.47.0"
 
 [requires]
 python_version = "3.6"

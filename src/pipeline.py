@@ -44,11 +44,12 @@ class CsvFilePipeline(Pipeline):
         return raw_data
 
     def parse_data(self, raw_data):
-        data = pd.merge(
-            raw_data["transaction"],
-            raw_data["identity"],
-            on=data_primary_key,
-            how="left")
+        # data = pd.merge(
+        #     raw_data["transaction"],
+        #     raw_data["identity"],
+        #     on=data_primary_key,
+        #     how="left")
+        data = raw_data["transaction"]
         data_x = data[feature_names]
         data_y = data[label_name]
         data_x["ProductCD"] = list(

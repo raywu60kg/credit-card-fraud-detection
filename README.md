@@ -6,7 +6,6 @@ Therefore, we use postgresSQL as our database and FastAPI as our API framework t
 - docker
 - docker-compose
 - make 
-- kaggle.json 
 
 ## dev mode
 ## Requirement

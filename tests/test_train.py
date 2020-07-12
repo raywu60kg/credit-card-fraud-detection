@@ -1,6 +1,6 @@
 from src.train import TrainLightGbmModel
 from src.pipeline import CsvFilePipeline
-from src.call_back import LightGBMCallback
+from src.callback import LightGBMCallback
 import lightgbm as lgb
 import os
 import pandas as pd
@@ -41,23 +41,23 @@ test_hyperparams_space = {
     "transaction_dir": test_transaction_dir
 }
 test_data_json = {
-    "TransactionAmt": 50,
-    "ProductCD": 1,
-    "card1": 5220,
-    "C1": 1,
-    "C2": 1,
-    "C3": 0,
-    "C4": 1,
-    "C5": 0,
-    "C6": 1,
-    "C7": 1,
-    "C8": 1,
-    "C9": 0,
-    "C10": 1,
-    "C11": 1,
-    "C12": 0,
-    "C13": 1,
-    "C14": 1
+    "TransactionAmt": 261.95,
+    "ProductCD": 4,
+    "card1": 16982,
+    "C1": 2.0,
+    "C2": 2.0,
+    "C3": 0.0,
+    "C4": 0.0,
+    "C5": 2.0,
+    "C6": 3.0,
+    "C7": 0.0,
+    "C8": 0.0,
+    "C9": 2.0,
+    "C10": 0.0,
+    "C11": 2.0,
+    "C12": 0.0,
+    "C13": 3.0,
+    "C14": 2.0
 }
 
 
@@ -105,6 +105,6 @@ class TestLightGbmModel:
         prediction = train_light_gbm_model.predict(
             model=model,
             data=test_data_json)
+        print(prediction)
+        assert prediction >= 0 and prediction <= 1
 
-        assert len(prediction) == 1
-        assert prediction[0] >= 0 and prediction[0] <= 1
