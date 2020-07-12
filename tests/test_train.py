@@ -89,10 +89,11 @@ class TestLightGbmModel:
             val_data=val_data)
         res = train_light_gbm_model.save_model(
             model=model,
+            model_name = "test",
             save_model_dir="tests/",
             test_data_x=test_data_x,
             test_data_y=test_data_y)
-        for key in ["log_loss", "auc", "average_precision"]:
+        for key in ["model_name", "log_loss", "auc", "average_precision"]:
             assert key in res.keys()
         os.remove("tests/model.txt")
         os.remove("tests/model_metrics.json")

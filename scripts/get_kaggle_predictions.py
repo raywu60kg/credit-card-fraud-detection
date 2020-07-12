@@ -53,59 +53,62 @@ data = data[feature_names]
 data["ProductCD"] = list(
     map(lambda x: productCD_categories.index(x),  data["ProductCD"]))
 
-# split data for the multiprocessing
-data_split = {}
-portion_size = len(data) // num_cpu +1
-start_index = 0
-for split_index in range(num_cpu-1):
-    end_index = start_index + portion_size
-    data_split[split_index] = data.iloc[start_index:end_index].reset_index(drop=True)
-    start_index = end_index
-data_split[num_cpu] = data.iloc[start_index:].reset_index(drop=True)
-del data
-gc.collect()
-
-def get_perdictions(idx, data, return_dict):
-    predictions = []
-    for idx in tqdm(range(len(data))):
-        request_data = {}
-        for feature_name in feature_names:
-            request_data[feature_name] = data[feature_name][idx]
-        
-        r = requests.post("http://localhost:8000/model:predict", data=json.dumps(request_data, cls=NpEncoder), headers=headers)
-        predictions.append(r.json()["prediction"])
-        return_dict[idx] = predictions
-    return return_dict
-
-# multiprocessing
-manager = multiprocessing.Manager()
-return_dict = manager.dict()
-jobs = []
-for key in data_split.keys():
-    p = multiprocessing.Process(target=get_perdictions, args=(key, data_split[key], return_dict))
-    jobs.append(p)
-    p.start()
-for proc in jobs:
-    proc.join()
-
-for key in return_dict.keys():
-    print(len(return_dict[key]))
-
-# write file
 predictions = []
-for idx in range(num_cpu):
-    predictions += return_dict[idx]
+for idx in tqdm(range(len(data))):
+    request_data = {}
+    for feature_name in feature_names:
+        request_data[feature_name] = data[feature_name][idx]
+    
+    r = requests.post("http://localhost:8000/model:predict", data=json.dumps(request_data, cls=NpEncoder), headers=headers)
+    predictions.append(r.json()["prediction"])
 sample_submission["isFraud"] = predictions
 sample_submission.to_csv("/tmp/submission.csv")
 
+"""TODO multuprocessing """
+# # split data for the multiprocessing
+# data_split = {}
+# portion_size = len(data) // num_cpu +1
+# start_index = 0
+# for split_index in range(num_cpu-1):
+#     end_index = start_index + portion_size
+#     data_split[split_index] = data.iloc[start_index:end_index].reset_index(drop=True)
+#     start_index = end_index
+# data_split[num_cpu] = data.iloc[start_index:].reset_index(drop=True)
+# del data
+# gc.collect()
 
+# def get_perdictions(idx, data, return_dict):
+#     predictions = []
+#     for idx in tqdm(range(len(data))):
+#         request_data = {}
+#         for feature_name in feature_names:
+#             request_data[feature_name] = data[feature_name][idx]
+        
+#         r = requests.post("http://localhost:8000/model:predict", data=json.dumps(request_data, cls=NpEncoder), headers=headers)
+#         predictions.append(r.json()["prediction"])
+#         return_dict[idx] = predictions
+#     return return_dict
+
+# # multiprocessing
+# manager = multiprocessing.Manager()
+# return_dict = manager.dict()
+# jobs = []
+# for key in data_split.keys():
+#     p = multiprocessing.Process(target=get_perdictions, args=(key, data_split[key], return_dict))
+#     jobs.append(p)
+#     p.start()
+# for proc in jobs:
+#     proc.join()
+
+# for key in return_dict.keys():
+#     print(len(return_dict[key]))
+
+# # write file
 # predictions = []
-# for idx in tqdm(range(len(data))):
-#     request_data = {}
-#     for feature_name in feature_names:
-#         request_data[feature_name] = data[feature_name][idx]
-    
-#     r = requests.post("http://localhost:8000/model:predict", data=json.dumps(request_data, cls=NpEncoder), headers=headers)
-#     predictions.append(r.json()["prediction"])
+# for idx in range(num_cpu):
+#     predictions += return_dict[idx]
 # sample_submission["isFraud"] = predictions
 # sample_submission.to_csv("/tmp/submission.csv")
+
+
+

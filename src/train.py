@@ -9,6 +9,7 @@ import lightgbm as lgb
 import os
 import pandas as pd
 import logging
+import gc
 
 
 class TrainModel:
@@ -46,10 +47,15 @@ class TrainLightGbmModel(TrainModel):
             raw_data = csv_file_pipeline.query(
                 identity_dir=hyperparams_space["identity_dir"],
                 transaction_dir=hyperparams_space["transaction_dir"])
-            csv_file_pipeline.parse_data(raw_data=raw_data)
+
+            data_x, data_y = csv_file_pipeline.parse_data(raw_data=raw_data)
+            del data_x, data_y, raw_data
+            gc.collect()
 
             train_data = csv_file_pipeline.get_train_data()
             val_data = csv_file_pipeline.get_val_data()
+            del csv_file_pipeline
+            gc.collect()
 
             # Train the model
             model = lgb.train(
@@ -90,10 +96,16 @@ class TrainLightGbmModel(TrainModel):
         raw_data = csv_file_pipeline.query(
             identity_dir=best_params["identity_dir"],
             transaction_dir=best_params["transaction_dir"])
-        csv_file_pipeline.parse_data(raw_data=raw_data)
+        
+        data_x, data_y = csv_file_pipeline.parse_data(raw_data=raw_data)
+        del data_x, data_y, raw_data
+        gc.collect()
 
         train_data = csv_file_pipeline.get_train_data()
         val_data = csv_file_pipeline.get_val_data()
+        del csv_file_pipeline
+        gc.collect()
+
         best_model = lgb.train(
             best_params,
             train_data,
@@ -105,11 +117,13 @@ class TrainLightGbmModel(TrainModel):
     def save_model(
             self,
             model,
+            model_name,
             save_model_dir,
             test_data_x,
             test_data_y):
         y_pred = model.predict(test_data_x)
         metrics = {
+            "model_name": model_name,
             "log_loss": log_loss(y_true=test_data_y, y_pred=y_pred),
             "auc": roc_auc_score(y_true=test_data_y, y_score=y_pred),
             "average_precision": average_precision_score(

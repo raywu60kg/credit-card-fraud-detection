@@ -1,18 +1,33 @@
-version: '3'
+version: '2'
 services:
-  db:
-    image: postgres:9.6
-    restart: always
-    environment:
-      - POSTGRES_USER=user
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=database
-    ports: 
-      - 5432:5432
+  # db:
+  #   image: postgres:9.6
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER=user
+  #     - POSTGRES_PASSWORD=password
+  #     - POSTGRES_DB=database
+  #   ports: 
+  #     - 5432:5432
 
-  # training:
-  #   build: .docker/
-  #   ports:
-  #     - 5000:5000
-  #   depends_on:
-  #     - db
+  app:
+    image: lightgbm-project-demo:0.0.1
+    ports:
+      - "8000:8000"
+    restart: always
+    command:
+      - make
+      - run-app
+
+  script:
+    image: lightgbm-project-demo:0.0.1
+    network_mode: "host"
+    volumes:
+      - /tmp/:/tmp/
+    depends_on:
+      - app
+    command:
+      - make 
+      - kaggle-predict
+    
+    
