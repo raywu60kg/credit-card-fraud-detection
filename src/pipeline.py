@@ -38,17 +38,30 @@ class PostgreSqlPipeline(Pipeline):
 class CsvFilePipeline(Pipeline):
 
     def query(self, identity_dir, transaction_dir):
+        """Query two data table from two different directory.
+        Args:
+            identity_dir: The directory of identity data.
+            transaction_dir: The directory of transaction data.
+        Returns:
+            A dictionary with key identity and transaction 
+            and corresponding data in  pandas DataFrame.  
+        """
+
         raw_data = {}
         raw_data["identity"] = pd.read_csv(identity_dir)
         raw_data["transaction"] = pd.read_csv(transaction_dir)
         return raw_data
 
     def parse_data(self, raw_data):
-        # data = pd.merge(
-        #     raw_data["transaction"],
-        #     raw_data["identity"],
-        #     on=data_primary_key,
-        #     how="left")
+        """Parse the raw data to the format that model need.
+        Args:
+            raw_data: A dictionary with key identity and transaction 
+                and corresponding data in  pandas DataFrame (The return from query).
+        Returns:
+            data_x: A pandas DataFrame with training features.
+            data_y: A pandas DataFrame with the label.
+        """
+
         data = raw_data["transaction"]
         data_x = data[feature_names]
         data_y = data[label_name]
@@ -69,9 +82,13 @@ class CsvFilePipeline(Pipeline):
         return data_x, data_y
 
     def get_train_data(self):
+        """Get the lightgbm dataset for training"""
+        
         return self.d_train
 
     def get_val_data(self):
+        """Get the lightgbm dataset for validation"""
+
         return  lgb.Dataset(
             self.val_x,
             label=self.val_y,
@@ -80,4 +97,12 @@ class CsvFilePipeline(Pipeline):
             reference=self.d_train)
 
     def get_test_data(self):
+        """Get the two pandas DataFrame 
+        which are test_x and test_y for testing because
+        lightgbm model take pandas DataFrame for predicting.
+        Returns:
+            test_x: A pandas DataFrame with training features.
+            test_y: A pandas DataFrame with the label.
+        """
+
         return  self.test_x, self.test_y

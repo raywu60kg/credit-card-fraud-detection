@@ -30,6 +30,15 @@ class TrainModel:
 class TrainLightGbmModel(TrainModel):
 
     def simple_train(self, params, train_data, val_data):
+        """Train one lightgbm model
+        Args:
+            params: The parameter set for lightgbm model.
+            train_data: lightgbm dataset for training.
+            val_data: lightgbm dataset for validating model.
+        Returns:
+            model: Trained lightgbm model.
+        """
+
         model = lgb.train(
             params,
             train_data,
@@ -38,6 +47,14 @@ class TrainLightGbmModel(TrainModel):
         return model
 
     def get_best_model(self, hyperparams_space, num_samples):
+        """Use ray tune to train mutiple lightgbm model and
+         return the best model in our hyperparameters search space.
+        Args:
+            hyperparams_space: The hyperparameters space for searching.
+            num_samples: Number of trial for ray tune.
+        Returns:
+            best_model: The best trained lightgbm model in hyperparameter space.
+        """
 
         # define the tuning function for ray tune
         def tune_light_gbm(hyperparams_space):
@@ -121,6 +138,17 @@ class TrainLightGbmModel(TrainModel):
             save_model_dir,
             test_data_x,
             test_data_y):
+        """Save the model and the metrics
+        Args:
+            model: Lightgbm model.
+            model_name: The model name for the model.
+            save_model_dir: The directory for model saving.
+            test_data_x: Pandas DataFrame with training features for calculating metrics.
+            test_data_y: Pandas DataFrame with label for calculating metrics.
+        Returns:
+            metrics: A dictionary with model metrics.
+        """
+
         y_pred = model.predict(test_data_x)
         metrics = {
             "model_name": model_name,
@@ -136,6 +164,14 @@ class TrainLightGbmModel(TrainModel):
         return metrics
 
     def predict(self, model, data):
-
+        """Calculate the prediction with given data
+        Args:
+            model: lightgbm model.
+            data: A dictionary with key and value for all the training features
+        Returns:
+            prediction: A float number which is the estimate of the probability 
+                for the postive label.
+        """
+        
         prediction = model.predict(pd.DataFrame(data, index=[0]))[0]
         return prediction

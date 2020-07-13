@@ -1,5 +1,5 @@
 # API example
-After we run the app, we can use **http://localhost:8000/docs** to check 
+After we run the` app`, we can use **http://localhost:8000/docs** to check.
 
 ## Health Check
 ```
@@ -11,7 +11,7 @@ curl localhost:8000/health
 curl localhost:8000/model/metrics
 ```
 
-## Retrain Model
+## Retrain the Model
 ```
 curl -X PUT "http://localhost:8000/model?model_name=default" -H "accept: application/json"
 ```
