@@ -29,7 +29,6 @@ app = FastAPI(
     openapi_tags=tags_metadata)
 package_dir = os.path.dirname(os.path.abspath(__file__))
 train_light_gbm_model = TrainLightGbmModel()
-global model
 model = lgb.Booster(model_file=os.path.join(
     package_dir, "..", "models/model.txt"))
 
@@ -95,6 +94,7 @@ async def retrain_model(model_name: str, background_tasks: BackgroundTasks):
 
         try:
             logging.info("Model Reload")
+            global model
             model = lgb.Booster(model_file=os.path.join(
                 package_dir, "..", "models/model.txt"))
         except Exception as e:
