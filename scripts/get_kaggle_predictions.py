@@ -31,6 +31,7 @@ productCD_categories = ['C', 'H', 'R', 'S', 'W']
 headers = {'Content-type': 'application/json'}
 num_cpu = multiprocessing.cpu_count()
 
+
 class NpEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.integer):
@@ -41,6 +42,7 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         else:
             return super(NpEncoder, self).default(obj)
+
 
 # load data
 package_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,11 +60,15 @@ for idx in tqdm(range(len(data))):
     request_data = {}
     for feature_name in feature_names:
         request_data[feature_name] = data[feature_name][idx]
-    
-    r = requests.post("http://localhost:8000/model:predict", data=json.dumps(request_data, cls=NpEncoder), headers=headers)
+
+    r = requests.post("http://localhost:8000/model:predict",
+                      data=json.dumps(
+                          request_data,
+                          cls=NpEncoder),
+                      headers=headers)
     predictions.append(r.json()["prediction"])
 sample_submission["isFraud"] = predictions
-sample_submission.to_csv("/tmp/submission.csv")
+sample_submission.to_csv("/tmp/submission.csv", index=False)
 
 """TODO multuprocessing """
 # # split data for the multiprocessing
@@ -83,7 +89,7 @@ sample_submission.to_csv("/tmp/submission.csv")
 #         request_data = {}
 #         for feature_name in feature_names:
 #             request_data[feature_name] = data[feature_name][idx]
-        
+
 #         r = requests.post("http://localhost:8000/model:predict", data=json.dumps(request_data, cls=NpEncoder), headers=headers)
 #         predictions.append(r.json()["prediction"])
 #         return_dict[idx] = predictions
@@ -109,6 +115,3 @@ sample_submission.to_csv("/tmp/submission.csv")
 #     predictions += return_dict[idx]
 # sample_submission["isFraud"] = predictions
 # sample_submission.to_csv("/tmp/submission.csv")
-
-
-
