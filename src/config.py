@@ -27,7 +27,7 @@ feature_names = [
 productCD_categories = ['C', 'H', 'R', 'S', 'W']
 categorical_feature_names = ["card1", "ProductCD"]
 
-num_samples = 20
+num_samples = 3
 hyperparams_space = {
     "objective": "binary",
     "metric": ["binary_logloss", "auc"],

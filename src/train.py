@@ -4,6 +4,7 @@ from src.callback import LightGBMCallback
 from src.eval import eval_average_precision
 from src.pipeline import CsvFilePipeline
 from sklearn.metrics import log_loss, roc_auc_score, average_precision_score
+import ray
 import json
 import lightgbm as lgb
 import os
@@ -96,6 +97,10 @@ class TrainLightGbmModel(TrainModel):
             tune.report(done=True)
 
         # Start tuning the hyperparams
+        ray.init(
+            memory=2000 * 1024 * 1024,
+            object_store_memory=200 * 1024 * 1024,
+            driver_object_store_memory=100 * 1024 * 1024)
         analysis = tune.run(
             tune_light_gbm,
             verbose=1,
