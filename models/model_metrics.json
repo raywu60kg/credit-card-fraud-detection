@@ -1,1 +1,1 @@
-{"model_name": "default", "log_loss": 0.1534271288086329, "auc": 0.856926113515805, "average_precision": 0.5095838669361954}
+{"model_name": "default", "log_loss": 0.06386683321547248, "auc": 0.9521003762503895, "average_precision": 0.7580368408440236}

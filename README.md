@@ -62,8 +62,5 @@ docker-compose up app
 ### Database
 Put the data inside a database to make it more similar to real world cases.
 
-### Ray tune
-Currently the whenever fastapi trigger ray tune will costs a lot of memory usage. If the **num_samples** is set to greater than one, it will crush my personal computer which has 16G mermery. Might need to use `Celery` and save the data to binary files instead of CSV.
-
-## API 
+### API 
 Might need to run API in mutiple machines and put load balancer for big amount of  request.
