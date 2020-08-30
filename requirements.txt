@@ -25,7 +25,7 @@ msgpack==1.0.0
 multidict==4.7.6
 numpy==1.19.1
 pandas==0.22
-protobuf==3.12.2
+protobuf==3.12.4
 psycopg2-binary==2.8.5
 py-spy==0.3.3
 pydantic==1.6.1
@@ -52,5 +52,5 @@ urllib3==1.24.3
 uvicorn==0.11.7
 uvloop==0.14.0 ; sys_platform != 'win32' and sys_platform != 'cygwin' and platform_python_implementation != 'PyPy'
 websockets==8.1
-yarl==1.5.0
+yarl==1.5.1
 zipp==3.1.0
