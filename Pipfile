@@ -13,6 +13,7 @@ autopep8 = "*"
 pep8 = "*"
 matplotlib-venn = "*"
 seaborn = "*"
+flake8 = "*"
 
 [packages]
 kaggle = "*"
