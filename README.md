@@ -1,5 +1,8 @@
 # Credit Card Fraud Detection
-![image](pictures/lightgbm-project-demo.png)
+![image](pictures/infra.png)
+
+---
+
 For this project, I used the datasets from the  kaggle competition called [IEEE-CIS Fraud Detection](https://www.kaggle.com/c/ieee-fraud-detection/data). The competition aims to improve fraud prevention system by building fraud detection models based on [Vesta Corporation's](https://trustvesta.com/) real-world e-commerce transactional data, which contains information from device type to product features.  My personal goal for this project is to not only explore the data and build models, but to also build an API server with retrainable model.  To achieve this goal, I used **fastapi**, **lightgbm** and **ray tune**. 
 
 Also, I decided to develop this project to be the same as how data-related projects are developed in real-world scenarios, wherein the end goal of development is a project that is feasible for production. Therefore, I have put efforts on creating:
