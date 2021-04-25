@@ -23,9 +23,9 @@ tags_metadata = [
 ]
 
 app = FastAPI(
-    title="Lightgbm Project Demo",
+    title="Credit Card Fraud Detection",
     description="This is machine learning project API",
-    version="0.0.1",
+    version="0.1.0",
     openapi_tags=tags_metadata)
 package_dir = os.path.dirname(os.path.abspath(__file__))
 train_light_gbm_model = TrainLightGbmModel()
