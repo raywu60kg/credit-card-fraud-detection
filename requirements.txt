@@ -25,7 +25,7 @@ msgpack==1.0.0
 multidict==4.7.6
 numpy==1.19.1
 pandas==0.22
-protobuf==3.12.4
+protobuf==3.18.3
 psycopg2-binary==2.8.5
 py-spy==0.3.3
 pydantic==1.6.1
